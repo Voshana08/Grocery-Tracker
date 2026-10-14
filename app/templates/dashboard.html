@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% from "partials/bottom_nav.html" import bottom_nav %}
+{% block title %}Grocery Tracker{% endblock %}
+{% block content %}
+<div class="page">
+  <header class="page-header">
+    <div>
+      <div class="muted" style="font-size: 14px;">{{ today_label }}</div>
+      <h1 class="greeting">Hi {{ owner_name }}</h1>
+    </div>
+    <a href="/logout" aria-label="Account" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid var(--color-border-input); background: var(--color-surface); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--color-primary-text);">{{ owner_name[:1] }}</a>
+  </header>
+
+  <section class="card card--summary">
+    <div>
+      <div class="muted" style="font-size: 14px;">Spent in {{ month_label }} so far</div>
+      <div class="display-number tabular-nums">{{ month_spend_cents|money }}</div>
+      <div class="muted" style="font-size: 14px;">across {{ month_trip_count }} trips</div>
+    </div>
+    <div class="divider"></div>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <span style="font-size: 15px; font-weight: 600;">This week</span>
+        <span class="muted tabular-nums" style="font-size: 14px;">{{ week_trip_count }} trips · {{ week_spend_cents|money }}</span>
+      </div>
+      <div class="week-row">
+        {% for day in week_days %}
+          <div class="week-day">
+            <div class="week-day-dot week-day-dot--{{ day.state }}"></div>
+            <span class="week-day-label{{ ' week-day-label--today' if day.is_today else '' }}">{{ day.letter }}</span>
+          </div>
+        {% endfor %}
+      </div>
+      <span class="muted" style="font-size: 13px;">Orange days had a shopping trip</span>
+    </div>
+  </section>
+
+  <a href="/trips/new" class="btn btn-primary">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+    Log a shopping trip
+  </a>
+
+  <div>
+    <h2 class="section-heading" style="margin-bottom: 10px;">At home</h2>
+    <div class="tile-grid">
+      {% for tile in location_tiles %}
+        <a href="/t/{{ tile.slug }}" class="location-tile">
+          {{ tile.icon_svg|safe }}
+          <span class="location-tile-name">{{ tile.name }}</span>
+          <span class="location-tile-status location-tile-status--{{ tile.status_class }}">{{ tile.status_text }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div>
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px;">
+      <h2 class="section-heading">Buy next time</h2>
+      <span class="muted" style="font-size: 13px;">{{ buy_next|length }} items</span>
+    </div>
+    {% if buy_next %}
+      <div class="card card--list">
+        {% for item in buy_next %}
+          <div class="list-row">
+            <div>
+              <div class="list-row-name">{{ item.name }}</div>
+              <div class="list-row-meta">{{ item.location }}</div>
+            </div>
+            <span class="badge badge--{{ item.status }}">{{ item.status|capitalize }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="card empty-state">
+        <p class="muted">Nothing running low. Nice.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+{% block bottom_nav %}{{ bottom_nav("home") }}{% endblock %}

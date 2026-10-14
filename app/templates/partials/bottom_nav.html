@@ -1,0 +1,16 @@
+{% macro bottom_nav(active) %}
+<nav class="bottom-nav" aria-label="Main">
+  <a href="/" class="nav-item" {{ 'aria-current="page"' if active == "home" }}>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-6.5 8 6.5V20h-5v-5H9v5H4z"></path></svg>
+    Home
+  </a>
+  <a href="/trips" class="nav-item" {{ 'aria-current="page"' if active == "trips" }}>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"></path></svg>
+    Trips
+  </a>
+  <a href="/spending" class="nav-item" {{ 'aria-current="page"' if active == "spending" }}>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"></path></svg>
+    Spending
+  </a>
+</nav>
+{% endmacro %}
