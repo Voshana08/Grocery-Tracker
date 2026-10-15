@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { api } from '../api/client.js'
+import { ChevronLeft } from '../components/Icons.jsx'
 import { formatLongDate, formatMoney } from '../lib/format.js'
 
-// key={id}: moving from one trip to another gives a fresh page with empty state.
-export default function TripDetailRoute() {
+export default function TripDetailPage() {
   const { id } = useParams()
-  return <TripDetailPage key={id} id={id} />
-}
-
-function TripDetailPage({ id }) {
   const [trip, setTrip] = useState(null)
   const [error, setError] = useState(null)
 
@@ -28,10 +24,7 @@ function TripDetailPage({ id }) {
       <title>{`${trip ? trip.store : 'Trip'} | Grocery Tracker`}</title>
       <div className="page-header">
         <Link to="/trips" className="back-link">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M15 5l-7 7 7 7" />
-          </svg>
+          <ChevronLeft />
           Trips
         </Link>
       </div>

@@ -25,26 +25,10 @@ function calendarDay(isoDate) {
   return new Date(`${isoDate}T12:00:00Z`)
 }
 
-// "2026-10-15" -> "Thu 15 Oct" (list rows)
-export function formatShortDate(isoDate) {
-  return new Intl.DateTimeFormat('en-AU', {
-    timeZone: 'UTC',
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-  })
-    .format(calendarDay(isoDate))
-    .replace(',', '')
+function formatDay(isoDate, style) {
+  const options = { timeZone: 'UTC', weekday: style, day: 'numeric', month: style }
+  return new Intl.DateTimeFormat('en-AU', options).format(calendarDay(isoDate)).replace(',', '')
 }
 
-// "2026-10-15" -> "Thursday 15 October" (headers)
-export function formatLongDate(isoDate) {
-  return new Intl.DateTimeFormat('en-AU', {
-    timeZone: 'UTC',
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  })
-    .format(calendarDay(isoDate))
-    .replace(',', '')
-}
+export const formatShortDate = (isoDate) => formatDay(isoDate, 'short') // "Thu 15 Oct"
+export const formatLongDate = (isoDate) => formatDay(isoDate, 'long') // "Thursday 15 October"

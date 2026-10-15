@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router'
 import { api } from '../api/client.js'
+import { ChevronLeft, Plus } from '../components/Icons.jsx'
 import StatusControl from '../components/StatusControl.jsx'
 
 const NEEDS_BUYING_FIRST = { out: 0, low: 1, plenty: 2 }
@@ -141,29 +142,11 @@ function LocationPage({ slug }) {
   )
 }
 
-function ChevronLeft() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M15 5l-7 7 7 7" />
-    </svg>
-  )
-}
-
 function NfcWaves() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       strokeWidth="2" strokeLinecap="round" aria-hidden="true">
       <path d="M6 8.5a8 8 0 0 1 0 7M9.5 6a12 12 0 0 1 0 12M13 4a16 16 0 0 1 0 16" />
-    </svg>
-  )
-}
-
-function Plus() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-      <path d="M12 5v14M5 12h14" />
     </svg>
   )
 }
