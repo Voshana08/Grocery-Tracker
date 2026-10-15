@@ -1,10 +1,17 @@
 // The only place the app calls fetch (CLAUDE.md section 4).
 
 export class ApiError extends Error {
-  constructor(message, status) {
+  constructor(message, status, fields = {}) {
     super(message)
     this.status = status // 0 means the server could not be reached
+    this.fields = fields // 422 only: { product_name: "Choose a ..." } for inline field errors
   }
+}
+
+// FastAPI's 422 detail is a list like [{ loc: ["body", "category_id"], msg: "..." }].
+function fieldErrors(detail) {
+  if (!Array.isArray(detail)) return {}
+  return Object.fromEntries(detail.map((error) => [error.loc.at(-1), error.msg]))
 }
 
 export async function api(path, options = {}) {
@@ -26,8 +33,12 @@ export async function api(path, options = {}) {
 
   const data = await response.json().catch(() => null)
   if (!response.ok) {
-    const message = typeof data?.detail === 'string' ? data.detail : 'Something went wrong.'
-    throw new ApiError(message, response.status)
+    const fields = fieldErrors(data?.detail)
+    const message =
+      typeof data?.detail === 'string'
+        ? data.detail
+        : (Object.values(fields)[0] ?? 'Something went wrong.')
+    throw new ApiError(message, response.status, fields)
   }
   return data
 }

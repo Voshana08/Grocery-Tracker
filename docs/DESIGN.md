@@ -128,7 +128,7 @@ All screens are designed at **390 × 844** (iPhone) and must not scroll sideways
 6. Unknown slug: friendly 404 "This tag isn't set up" with a link Home.
 
 ### Add item `/items/new`
-Header with Cancel; title "Add item"; fields: Product name (with suggestions), Category (select), Location (select, pre-selected from the tag page), Status (segmented control, default Plenty); primary button "Add item". On success return to that location page.
+Mockup: "Add item (v1, your palette)" on the canvas (approved 15 Oct 2026). Header with Cancel (back to the tag page it came from); centred title "Add item". Fields, each with a 14px/600 ink label above and a 48px input: Product name (with suggestions; choosing a known product fills in its Category), Category (select), Location (select, pre-selected from the tag page), Status (Plenty / Low / Out buttons across the full width, 48px, default Plenty). Primary button "Add item" at the bottom ("Adding…" while saving). Empty name: inline error "Add a name for this item". Adding a product that is already in that location updates its status. On success return to that location page.
 
 ### Log a trip `/trips/new`  (mockup: Log a trip)
 1. Header: Cancel, centred "New trip".

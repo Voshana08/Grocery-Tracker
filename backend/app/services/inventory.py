@@ -1,7 +1,15 @@
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
 from app.models import Category, InventoryItem, Location, Product, StockStatus, utc_now
 from app.schemas import LocationItemOut
+
+
+class InvalidChoice(ValueError):
+    """A form value that points at something that doesn't exist (e.g. an unknown category)."""
+
+    def __init__(self, field: str, message: str):
+        super().__init__(message)
+        self.field = field
 
 
 def get_location_by_slug(session: Session, slug: str) -> Location | None:
@@ -41,3 +49,57 @@ def set_status(session: Session, item_id: int, status: StockStatus) -> LocationI
     session.add(item)
     session.commit()
     return _to_out(*row)
+
+
+def list_locations(session: Session) -> list[Location]:
+    return session.exec(select(Location).order_by(Location.id)).all()
+
+
+def list_categories(session: Session) -> list[Category]:
+    return session.exec(select(Category).order_by(Category.id)).all()
+
+
+def search_products(session: Session, search: str = "") -> list[Product]:
+    query = select(Product).order_by(Product.name)
+    if search.strip():
+        query = query.where(func.lower(Product.name).contains(search.strip().lower()))
+    return session.exec(query).all()
+
+
+def find_product(session: Session, name: str) -> Product | None:
+    """Look up a product by name, ignoring capitals ("butter" finds "Butter")."""
+    return session.exec(select(Product).where(func.lower(Product.name) == name.lower())).first()
+
+
+def add_item(
+    session: Session, product_name: str, category_id: int, location_slug: str, status: StockStatus
+) -> LocationItemOut:
+    """Put a product in a location. Reuses an existing product with the same name; if that
+    product is already in the location, its status is updated instead of adding a duplicate."""
+    location = get_location_by_slug(session, location_slug)
+    if location is None:
+        raise InvalidChoice("location_slug", "Choose a location")
+
+    product = find_product(session, product_name)
+    if product is None:
+        if session.get(Category, category_id) is None:
+            raise InvalidChoice("category_id", "Choose a category")
+        product = Product(
+            name=product_name, category_id=category_id, default_location_id=location.id
+        )
+        session.add(product)
+        session.flush()  # gives the new product an id
+
+    item = session.exec(
+        select(InventoryItem).where(
+            InventoryItem.product_id == product.id, InventoryItem.location_id == location.id
+        )
+    ).first()
+    if item is None:
+        item = InventoryItem(product_id=product.id, location_id=location.id, status=status)
+    else:
+        item.status = status
+        item.updated_at = utc_now()
+    session.add(item)
+    session.commit()
+    return _to_out(item, product, session.get(Category, product.category_id))
