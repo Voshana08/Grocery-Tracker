@@ -24,7 +24,7 @@ Put these in `frontend/src/styles/tokens.css` under `:root` exactly once. Compon
 
 | Token | Hex | Use |
 |---|---|---|
-| `--color-bg` | `#F6F2DB` | Page background (butter tint); content areas are white |
+| `--color-bg` | `#FFFFFF` | Page background: white, as in the owner's mockups (changed 15 Oct 2026). Cards stand out by their border |
 | `--color-surface` | `#FFFFFF` | Cards, inputs, bottom nav, dashboard content area |
 | `--color-border` | `#E6DFC2` | Card borders, nav top border |
 | `--color-border-input` | `#8E7D86` | Inputs and selects (3.9:1 on white, so the field edge is visible) |

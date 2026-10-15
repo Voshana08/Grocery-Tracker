@@ -1,6 +1,6 @@
 /* Design tokens from docs/DESIGN.md section 2. The only place hex colours live. */
 :root {
-  --color-bg: #f6f2db;
+  --color-bg: #ffffff;
   --color-surface: #ffffff;
   --color-border: #e6dfc2;
   --color-border-input: #8e7d86;
