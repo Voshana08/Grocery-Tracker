@@ -30,5 +30,5 @@ def create_item(new_item: ItemCreate, session: Session = Depends(get_session)):
         # Same shape as FastAPI's own 422s, so the form can show it next to the right field.
         raise HTTPException(
             status_code=422,
-            detail=[{"loc": ["body", error.field], "msg": str(error), "type": "value_error"}],
+            detail=[{"loc": ["body", *error.loc], "msg": str(error), "type": "value_error"}],
         ) from error

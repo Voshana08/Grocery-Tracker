@@ -46,11 +46,11 @@ def test_add_item_with_unknown_location_or_category_is_refused(session):
     dairy = category_id(session, "Dairy & eggs")
     with pytest.raises(InvalidChoice) as error:
         add_item(session, "Butter", dairy, "garage", StockStatus.plenty)
-    assert error.value.field == "location_slug"
+    assert error.value.loc == ("location_slug",)
 
     with pytest.raises(InvalidChoice) as error:
         add_item(session, "Butter", 999, "fridge", StockStatus.plenty)
-    assert error.value.field == "category_id"
+    assert error.value.loc == ("category_id",)
 
 
 def test_post_item_then_it_appears_on_the_location_page(client, session):
