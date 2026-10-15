@@ -185,7 +185,7 @@ All JSON. All under `/api`. Interactive docs at `http://127.0.0.1:8000/docs` whi
 | `POST /api/items` | Body `{product_name, category_id, location_slug, status}`. Reuses the Product by name (ignoring capitals) or creates it; adds it to the location. **If it is already in that location, its status is updated instead** (owner's choice). Unknown category or location: 422 on that field | #10 |
 | `POST /api/trips` | Log a trip (rules 1 and 6); returns the saved trip with `total_cents` | #11, #12 |
 | `GET /api/trips/{id}` | One trip with its items and `total_cents` (the Trip saved page uses it after a reload) | #11 |
-| `GET /api/trips` | Trips list (newest first, with totals and item counts) | #13 |
+| `GET /api/trips` | Trips list, newest first (same day: latest logged first): `id`, `store`, `trip_date`, `item_count`, `total_cents`, counted and summed in one SQL query | #13 |
 | `GET /api/dashboard` | Month spend, trips this week (rule 4), low and out items (rule 5) | #14 |
 | `GET /api/spending?month=YYYY-MM` | Monthly spend by category (rule 3); defaults to the current month | #15 |
 
