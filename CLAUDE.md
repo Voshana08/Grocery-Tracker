@@ -58,11 +58,11 @@ Runtime packages go in `backend/requirements.txt`; dev-only tools (ruff, pytest,
 | Build tool | Vite, created with the `react` template | Dev server on port 5173 with hot reload |
 | UI library | React | Function components and hooks only; no class components |
 | Language | **Plain JavaScript (JSX), not TypeScript** | Keeps the new material small for the owner. TypeScript is backlog |
-| Routing | React Router (`react-router` package) | URLs in section 9 |
+| Routing | React Router 8 (`react-router` package) | URLs in section 9 |
 | Data fetching | Built-in `fetch`, wrapped once in `src/api/client.js` | No axios, no React Query, no Redux in iteration 1 |
 | Styling | Plain CSS: `src/styles/tokens.css` (the `:root` tokens from `docs/DESIGN.md`) + `src/styles/app.css` | **No Tailwind, no CSS-in-JS, no component library.** Components use the variables, never raw hex |
 | Fonts | Google Fonts: Bricolage Grotesque (600, 700) and Figtree (400, 500, 600, 700) | Linked in `index.html` |
-| Lint | ESLint, as set up by the Vite template | `npm run lint` |
+| Lint | oxlint, as set up by the Vite template (it replaced ESLint) | `npm run lint` |
 
 ### Hosting
 

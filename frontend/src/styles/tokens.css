@@ -1,0 +1,32 @@
+/* Design tokens from docs/DESIGN.md section 2. The only place hex colours live. */
+:root {
+  --color-bg: #f6f2db;
+  --color-surface: #ffffff;
+  --color-border: #e6dfc2;
+  --color-border-input: #8e7d86;
+  --color-border-control: #e0d8be;
+  --color-divider: #efe9d0;
+  --color-ink: #381d2a;
+  --color-muted: #6b5762;
+  --color-primary: #3e6990;
+  --color-primary-hover: #335a7d;
+  --color-plenty: #aabd8c;
+  --color-plenty-border: #8fa472;
+  --color-stocked-text: #58703f;
+  --color-stocked-tint: #e6ecdb;
+  --color-stocked-tint-text: #3f5530;
+  --color-low-bg: #e9e3b4;
+  --color-low-text: #381d2a;
+  --color-low-border: #cfc68a;
+  --color-out-bg: #381d2a;
+  --color-out-text: #ffffff;
+  --color-error-bg: #fce4d7;
+  --color-error-text: #a3461c;
+  --color-error-border: #a3461c;
+  --color-trip-day: #ee6c4d;
+  --color-day-future: #b8a9ae;
+  --color-dashed: #8e7d86;
+
+  --font-display: 'Bricolage Grotesque', Figtree, system-ui, sans-serif;
+  --font-body: Figtree, system-ui, sans-serif;
+}
