@@ -118,7 +118,6 @@ backend/
     schemas.py         # Pydantic request/response shapes
     auth.py            # hash/verify password, require_login dependency
     seed.py            # python -m app.seed : locations, categories, owner user (idempotent)
-    seed_samples.py    # python -m app.seed_samples : 5 sample inventory items, local only; delete after #10
     services/
       inventory.py     # get_location_with_items, set_status, add_item, low_and_out_items
       trips.py         # create_trip (with restock), list_trips, get_trip, trip_total_cents
@@ -178,12 +177,12 @@ All JSON. All under `/api`. Interactive docs at `http://127.0.0.1:8000/docs` whi
 |---|---|---|
 | `GET /api/health` | `{"status": "ok"}`, no login | done (move to `/api/health` in #8) |
 | `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` | Single-user login; `me` returns `username` and `display_name`, or 401 | #16 |
-| `GET /api/locations` | The 3 locations with low/out counts (dashboard tiles) | #14 |
+| `GET /api/locations` | The 3 locations (`name`, `slug`) for the add-item form; #14 adds low/out counts for the dashboard tiles | #10, #14 |
 | `GET /api/locations/{slug}` | `{"name", "slug", "items": [{"id", "name", "category", "status"}]}`, items sorted by product name; 404 for an unknown slug | #8 |
 | `PATCH /api/inventory/{id}` | Body `{"status": "low"}`; returns the updated item | #9 |
 | `GET /api/categories` | For the category selects | #10 |
-| `GET /api/products?search=` | Existing product names for suggestions (`<datalist>`) | #10 |
-| `POST /api/items` | Add an item: creates or reuses the Product by name, creates the InventoryItem | #10 |
+| `GET /api/products?search=` | Existing products (`id`, `name`, `category_id`) for suggestions (`<datalist>`) and category auto-fill; `search` matches part of the name, ignoring capitals | #10 |
+| `POST /api/items` | Body `{product_name, category_id, location_slug, status}`. Reuses the Product by name (ignoring capitals) or creates it; adds it to the location. **If it is already in that location, its status is updated instead** (owner's choice). Unknown category or location: 422 on that field | #10 |
 | `POST /api/trips` | Log a trip (rules 1 and 6); returns the saved trip with `total_cents` | #11, #12 |
 | `GET /api/trips`, `GET /api/trips/{id}` | Trips list (newest first, with totals and item counts) and trip detail | #13 |
 | `GET /api/dashboard` | Month spend, trips this week (rule 4), low and out items (rule 5) | #14 |

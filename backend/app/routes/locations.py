@@ -2,10 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
 from app.database import get_session
-from app.schemas import LocationOut
-from app.services.inventory import get_location_by_slug, list_location_items
+from app.schemas import LocationOut, LocationSummaryOut
+from app.services.inventory import get_location_by_slug, list_location_items, list_locations
 
 router = APIRouter(prefix="/locations", tags=["locations"])
+
+
+@router.get("", response_model=list[LocationSummaryOut])
+def get_locations(session: Session = Depends(get_session)):
+    return list_locations(session)
 
 
 @router.get("/{slug}", response_model=LocationOut)

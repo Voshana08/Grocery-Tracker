@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router'
+import AddItemPage from './pages/AddItemPage.jsx'
 import LocationPage from './pages/LocationPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 
@@ -7,6 +8,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/t/:slug" element={<LocationPage />} />
+      <Route path="/items/new" element={<AddItemPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )

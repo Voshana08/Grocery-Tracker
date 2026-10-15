@@ -29,7 +29,6 @@ pip install -r requirements-dev.txt
 cp .env.example .env
 
 python -m app.seed                 # seed locations and categories (safe to re-run)
-python -m app.seed_samples         # optional: 5 sample items for local testing
 uvicorn app.main:app --reload      # API on http://127.0.0.1:8000, docs at /docs
 ```
 
@@ -53,7 +52,6 @@ backend/
     models.py        # SQLModel tables
     schemas.py       # API request/response shapes
     seed.py          # python -m app.seed
-    seed_samples.py  # python -m app.seed_samples (local only, removed after #10)
     services/        # business logic
     routes/          # FastAPI routers
   tests/
