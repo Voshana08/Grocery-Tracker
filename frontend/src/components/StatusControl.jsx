@@ -4,7 +4,7 @@ const OPTIONS = [
   { value: 'out', label: 'Out' },
 ]
 
-// Plenty / Low / Out buttons for one item. onChange is wired up in #9 (status buttons).
+// Plenty / Low / Out buttons for one item. onChange(newStatus) runs on each tap.
 export default function StatusControl({ itemName, status, onChange }) {
   return (
     <div className="status-control" role="group" aria-label={`Stock level for ${itemName}`}>

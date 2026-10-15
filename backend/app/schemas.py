@@ -12,6 +12,10 @@ class LocationItemOut(BaseModel):
     status: StockStatus
 
 
+class StatusUpdate(BaseModel):
+    status: StockStatus
+
+
 class LocationOut(BaseModel):
     name: str
     slug: str

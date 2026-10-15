@@ -27,6 +27,7 @@ function LocationPage({ slug }) {
   const { state } = useLocation()
   const [location, setLocation] = useState(null)
   const [error, setError] = useState(null)
+  const [saveError, setSaveError] = useState(null)
 
   useEffect(() => {
     let ignore = false // if the page closes mid-request, drop the late answer
@@ -37,6 +38,31 @@ function LocationPage({ slug }) {
       ignore = true
     }
   }, [slug])
+
+  function setItemStatus(itemId, status, onlyIf) {
+    setLocation((current) => ({
+      ...current,
+      items: current.items.map((item) =>
+        item.id === itemId && (!onlyIf || item.status === onlyIf) ? { ...item, status } : item,
+      ),
+    }))
+  }
+
+  // Show the new status at once, then save it. If saving fails, put the old one back.
+  function changeStatus(item, newStatus) {
+    if (newStatus === item.status) return
+    const oldStatus = item.status
+    setItemStatus(item.id, newStatus)
+    setSaveError(null)
+    api(`/inventory/${item.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: newStatus }),
+    }).catch(() => {
+      // onlyIf: if another tap changed this item meanwhile, keep that newer choice.
+      setItemStatus(item.id, oldStatus, newStatus)
+      setSaveError(`Couldn't save ${item.name}. Try again.`)
+    })
+  }
 
   if (error?.status === 404) {
     return (
@@ -67,9 +93,9 @@ function LocationPage({ slug }) {
         )}
       </div>
 
-      {error && (
+      {(error || saveError) && (
         <p className="error-banner" role="alert">
-          {error.message}
+          {saveError ?? error.message}
         </p>
       )}
       {!location && !error && <p className="muted">Loading…</p>}
@@ -95,7 +121,11 @@ function LocationPage({ slug }) {
                     <span className="item-name">{item.name}</span>
                     <span className="item-category muted">{item.category}</span>
                   </div>
-                  <StatusControl itemName={item.name} status={item.status} />
+                  <StatusControl
+                    itemName={item.name}
+                    status={item.status}
+                    onChange={(newStatus) => changeStatus(item, newStatus)}
+                  />
                 </li>
               ))}
             </ul>
