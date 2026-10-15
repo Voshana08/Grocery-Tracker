@@ -86,16 +86,11 @@ def get_or_create_product(
     return product
 
 
-def add_item(
-    session: Session, product_name: str, category_id: int, location_slug: str, status: StockStatus
-) -> LocationItemOut:
-    """Put a product in a location. Reuses an existing product with the same name; if that
-    product is already in the location, its status is updated instead of adding a duplicate."""
-    location = get_location_by_slug(session, location_slug)
-    if location is None:
-        raise InvalidChoice(("location_slug",), "Choose a location")
-    product = get_or_create_product(session, product_name, category_id, location)
-
+def set_stock(
+    session: Session, product: Product, location: Location, status: StockStatus
+) -> InventoryItem:
+    """Set a product's status in a location, creating its row there if it isn't tracked yet.
+    Doesn't commit: the caller decides when, so it can be part of a bigger transaction."""
     item = session.exec(
         select(InventoryItem).where(
             InventoryItem.product_id == product.id, InventoryItem.location_id == location.id
@@ -107,5 +102,19 @@ def add_item(
         item.status = status
         item.updated_at = utc_now()
     session.add(item)
+    return item
+
+
+def add_item(
+    session: Session, product_name: str, category_id: int, location_slug: str, status: StockStatus
+) -> LocationItemOut:
+    """Put a product in a location. Reuses an existing product with the same name; if that
+    product is already in the location, its status is updated instead of adding a duplicate."""
+    location = get_location_by_slug(session, location_slug)
+    if location is None:
+        raise InvalidChoice(("location_slug",), "Choose a location")
+    product = get_or_create_product(session, product_name, category_id, location)
+
+    item = set_stock(session, product, location, status)
     session.commit()
     return _to_out(item, product, session.get(Category, product.category_id))

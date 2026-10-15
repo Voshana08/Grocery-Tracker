@@ -2,9 +2,14 @@ from datetime import date
 
 from sqlmodel import Session, select
 
-from app.models import Category, Location, Product, ShoppingTrip, Store, TripItem
+from app.models import Category, Location, Product, ShoppingTrip, StockStatus, Store, TripItem
 from app.schemas import TripItemIn, TripItemOut, TripOut
-from app.services.inventory import InvalidChoice, get_location_by_slug, get_or_create_product
+from app.services.inventory import (
+    InvalidChoice,
+    get_location_by_slug,
+    get_or_create_product,
+    set_stock,
+)
 
 
 def trip_total_cents(items: list[TripItem] | list[TripItemOut]) -> int:
@@ -15,7 +20,8 @@ def trip_total_cents(items: list[TripItem] | list[TripItemOut]) -> int:
 def create_trip(
     session: Session, store: Store, trip_date: date, items: list[TripItemIn]
 ) -> TripOut:
-    """Save a trip and its items in ONE transaction: if any row is invalid, nothing is saved."""
+    """Save a trip and its items, and restock home: every item bought is set to plenty where
+    it went (rule 1). All in ONE transaction: if any row is invalid, nothing is saved."""
     try:
         trip = ShoppingTrip(store=store, trip_date=trip_date)
         session.add(trip)
@@ -36,9 +42,10 @@ def create_trip(
                     quantity_bought=row.quantity_bought,
                 )
             )
+            set_stock(session, product, location, StockStatus.plenty)  # restock home
         session.commit()
     except Exception:
-        session.rollback()  # undo the trip, its items and any new products
+        session.rollback()  # undo the trip, its items, new products and the restock
         raise
     return get_trip(session, trip.id)
 

@@ -1,9 +1,18 @@
-from datetime import date
+from datetime import UTC, date, datetime
 
 import pytest
 from sqlmodel import select
 
-from app.models import Category, Product, ShoppingTrip, StockStatus, Store, TripItem
+from app.models import (
+    Category,
+    InventoryItem,
+    Location,
+    Product,
+    ShoppingTrip,
+    StockStatus,
+    Store,
+    TripItem,
+)
 from app.schemas import TripItemIn
 from app.services.inventory import InvalidChoice
 from app.services.trips import create_trip, trip_total_cents
@@ -128,3 +137,64 @@ def test_post_trip_errors_say_which_row_and_field(client, session):
 
 def test_unknown_trip_is_404(client):
     assert client.get("/api/trips/999").status_code == 404
+
+
+def stock(session, product_name, slug):
+    """Status of a product in a location, or None if it isn't tracked there."""
+    row = session.exec(
+        select(InventoryItem)
+        .join(Product, InventoryItem.product_id == Product.id)
+        .join(Location, InventoryItem.location_id == Location.id)
+        .where(Product.name == product_name, Location.slug == slug)
+    ).first()
+    return row.status if row else None
+
+
+def test_saving_a_trip_restocks_items_already_at_home(session, add_item):
+    butter = add_item("Butter", "Dairy & eggs", "fridge", StockStatus.out)
+    butter.updated_at = datetime(2026, 1, 1, tzinfo=UTC)
+    session.add(butter)
+    session.commit()
+
+    create_trip(
+        session, Store.coles, date(2026, 10, 15), [row(session, "Butter", "Other", "fridge", 550)]
+    )
+
+    session.refresh(butter)
+    assert butter.status == StockStatus.plenty
+    assert butter.updated_at > datetime(2026, 1, 1, tzinfo=UTC)
+
+
+def test_saving_a_trip_adds_new_items_to_where_they_went(session, add_item):
+    add_item("Butter", "Dairy & eggs", "fridge", StockStatus.low)
+
+    create_trip(
+        session,
+        Store.aldi,
+        date(2026, 10, 15),
+        [
+            row(session, "Butter", "Other", "pantry", 550),  # known product, new place this time
+            row(session, "Dishwashing liquid", "Cleaning", "cleaning", 399),  # brand-new product
+        ],
+    )
+
+    assert stock(session, "Butter", "pantry") == StockStatus.plenty
+    assert stock(session, "Butter", "fridge") == StockStatus.low  # other places untouched
+    assert stock(session, "Dishwashing liquid", "cleaning") == StockStatus.plenty
+
+
+def test_a_failed_trip_restocks_nothing(session, add_item):
+    add_item("Butter", "Dairy & eggs", "fridge", StockStatus.out)
+
+    with pytest.raises(InvalidChoice):
+        create_trip(
+            session,
+            Store.aldi,
+            date(2026, 10, 15),
+            [
+                row(session, "Butter", "Other", "fridge", 550),
+                row(session, "Anything", "Other", "garage", 100),
+            ],
+        )
+
+    assert stock(session, "Butter", "fridge") == StockStatus.out
