@@ -88,9 +88,9 @@ def list_trips(session: Session) -> list[TripSummaryOut]:
         select(
             ShoppingTrip,
             func.count(TripItem.id),
-            func.coalesce(func.sum(TripItem.price_cents * TripItem.quantity_bought), 0),
+            func.sum(TripItem.price_cents * TripItem.quantity_bought),
         )
-        .outerjoin(TripItem, TripItem.trip_id == ShoppingTrip.id)
+        .join(TripItem, TripItem.trip_id == ShoppingTrip.id)  # every trip has 1+ items
         .group_by(ShoppingTrip.id)
         .order_by(ShoppingTrip.trip_date.desc(), ShoppingTrip.id.desc())
     ).all()
