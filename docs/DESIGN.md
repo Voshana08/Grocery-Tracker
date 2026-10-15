@@ -139,7 +139,7 @@ Mockup: "Add item (v1, your palette)" on the canvas (approved 15 Oct 2026). Head
 6. Errors: banner above the items ("1 item needs a price before saving", or "2 items need fixing before saving" for other mistakes) plus inline errors under the row ("Add a product name", "Add a price for this item", "Use a price like 4.50"); rows kept.
 
 ### Trip saved `/trips/{id}/saved`
-Card with check icon in a stocked-tint circle, "Trip saved", "3 items from Woolworths", total, "Every item is now marked Plenty at home." (added in #12, once restocking exists), primary "Back to dashboard". A secondary text link "View trip". Built in #11; survives a reload by fetching the trip.
+Card with check icon in a stocked-tint circle, "Trip saved", "3 items from Woolworths", total, "Every item is now marked Plenty at home.", primary "Back to dashboard". A secondary text link "View trip". Built in #11; survives a reload by fetching the trip.
 
 ### Trips `/trips`
 Bottom nav (Trips active). Title "Trips". Rows: store and date ("Woolworths · Thu 8 Oct"), item count, total on the right. Newest first. Empty: "No trips logged yet" with "Log a shopping trip".

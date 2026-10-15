@@ -215,7 +215,7 @@ Work in this order; each issue's checklist on GitHub is the acceptance criteria.
 2. **#9 Status buttons**: `set_status` service and test, `PATCH /api/inventory/{id}`, `StatusControl` component.
 3. **#10 Add item**: categories and product-suggestion endpoints, `POST /api/items`, `AddItemPage` with location pre-filled from `?location=`.
 4. **#11 Log a trip**: `TripCreate` schema, validation (rule 6), `TripFormPage` with add-row, remove-row, discard confirm, price-to-cents helper (`lib/format.js`). The Trip saved page was pulled forward into #11.
-5. **#12 Restock**: rule 1 inside `create_trip` (it already saves in one transaction); tests for new item, existing item set back to plenty, and rollback. Add the "Every item is now marked Plenty at home." line to the Trip saved page.
+5. **#12 Restock**: rule 1 inside `create_trip` (it already saves in one transaction); tests for new item, existing item set back to plenty, and rollback (done: `set_stock` is shared with add item). Adds the "Every item is now marked Plenty at home." line to the Trip saved page.
 6. **#13 Trips list and detail.**
 7. **#14 Dashboard**: `GET /api/locations` counts and `GET /api/dashboard`; month spend, week row, location tiles, "Buy next time" list.
 8. **#15 Spending page**: rule 3, month navigation, empty state; tests for totals.

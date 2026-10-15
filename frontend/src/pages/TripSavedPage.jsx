@@ -45,6 +45,7 @@ export default function TripSavedPage() {
             {count === 1 ? '1 item' : `${count} items`} from {trip.store}
           </p>
           <p className="saved-total">{formatMoney(trip.total_cents)}</p>
+          <p className="muted">Every item is now marked Plenty at home.</p>
           <Link to="/" className="button-primary">
             Back to dashboard
           </Link>
