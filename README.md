@@ -9,7 +9,7 @@ this week, and what's running low.
 
 The second iteration will suggest recipes from the ingredients you have at home.
 
-See `docs/CLAUDE.md` for the full development brief and `docs/DESIGN.md` for the visual design
+See `CLAUDE.md` for the full development brief and `docs/DESIGN.md` for the visual design
 spec — both are the source of truth for how this app is built.
 
 ## Tech stack
@@ -57,6 +57,6 @@ docs/              # development brief, design spec, mockups
 
 ## Status
 
-Iteration 1 is in progress, built issue by issue (see `docs/CLAUDE.md` section 9). The
+Iteration 1 is in progress, built issue by issue (see `CLAUDE.md` section 10). The
 location page (`GET /t/{slug}`) is live; the dashboard and trip-logging pages have templates
 but no routes yet.
