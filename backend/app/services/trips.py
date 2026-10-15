@@ -1,9 +1,9 @@
 from datetime import date
 
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 
 from app.models import Category, Location, Product, ShoppingTrip, StockStatus, Store, TripItem
-from app.schemas import TripItemIn, TripItemOut, TripOut
+from app.schemas import TripItemIn, TripItemOut, TripOut, TripSummaryOut
 from app.services.inventory import (
     InvalidChoice,
     get_location_by_slug,
@@ -80,3 +80,27 @@ def get_trip(session: Session, trip_id: int) -> TripOut | None:
         items=items,
         total_cents=trip_total_cents(items),
     )
+
+
+def list_trips(session: Session) -> list[TripSummaryOut]:
+    """Every trip, newest first, with its item count and total worked out in one query."""
+    rows = session.exec(
+        select(
+            ShoppingTrip,
+            func.count(TripItem.id),
+            func.coalesce(func.sum(TripItem.price_cents * TripItem.quantity_bought), 0),
+        )
+        .outerjoin(TripItem, TripItem.trip_id == ShoppingTrip.id)
+        .group_by(ShoppingTrip.id)
+        .order_by(ShoppingTrip.trip_date.desc(), ShoppingTrip.id.desc())
+    ).all()
+    return [
+        TripSummaryOut(
+            id=trip.id,
+            store=trip.store,
+            trip_date=trip.trip_date,
+            item_count=count,
+            total_cents=total,
+        )
+        for trip, count, total in rows
+    ]

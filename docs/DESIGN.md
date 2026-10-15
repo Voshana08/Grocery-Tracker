@@ -142,10 +142,10 @@ Mockup: "Add item (v1, your palette)" on the canvas (approved 15 Oct 2026). Head
 Card with check icon in a stocked-tint circle, "Trip saved", "3 items from Woolworths", total, "Every item is now marked Plenty at home.", primary "Back to dashboard". A secondary text link "View trip". Built in #11; survives a reload by fetching the trip.
 
 ### Trips `/trips`
-Bottom nav (Trips active). Title "Trips". Rows: store and date ("Woolworths · Thu 8 Oct"), item count, total on the right. Newest first. Empty: "No trips logged yet" with "Log a shopping trip".
+Mockup: "Trips (v1, your palette)" (approved 15 Oct 2026). Bottom nav (Trips active). Title "Trips" (32px, like "Fridge"). One card of rows, divider lines between: store and date ("Woolworths · Thu 8 Oct", 15px/600), item count under it (13px muted), total on the right (15px/600). Each row links to the trip. Newest first (same day: latest logged first). Empty: a card with "No trips logged yet" and the primary "Log a shopping trip" button.
 
 ### Trip detail `/trips/{id}`
-Back to Trips; title store; date; list of items (name, location, price × quantity); total at the bottom.
+Mockup: "Trip detail (v1, your palette)" (approved 15 Oct 2026). "‹ Trips" back link; title is the store (32px); full date under it ("Wednesday 14 October"); one card of items: name, where it went (13px muted), line total on the right, with "2 × $4.15" under it when more than one was bought; a "Trip total" card at the bottom. No bottom nav. Unknown trip: "Trip not found" with a link to all trips.
 
 ### Spending `/spending`
 Bottom nav (Spending active). Month switcher: previous arrow, "October 2026", next arrow (disabled for future months). Summary card: total and trip count. Category list: name, amount, and a simple bar (primary colour) showing its share of the month. Empty: "No trips in September" with a muted explanation.

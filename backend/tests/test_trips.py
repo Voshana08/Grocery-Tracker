@@ -198,3 +198,26 @@ def test_a_failed_trip_restocks_nothing(session, add_item):
         )
 
     assert stock(session, "Butter", "fridge") == StockStatus.out
+
+
+def test_trips_list_is_newest_first_with_counts_and_totals(client, session):
+    def log(store, day, prices):
+        body = trip_body(session, store=store, trip_date=day)
+        body["items"] = [{**body["items"][0], "price_cents": cents} for cents in prices]
+        return client.post("/api/trips", json=body).json()["id"]
+
+    older = log("Aldi", "2026-10-10", [500, 250])
+    newer = log("Coles", "2026-10-14", [999])
+    same_day_later = log("Woolworths", "2026-10-14", [100, 100, 100])
+
+    trips = client.get("/api/trips").json()
+
+    assert [(t["id"], t["store"], t["item_count"], t["total_cents"]) for t in trips] == [
+        (same_day_later, "Woolworths", 3, 300),
+        (newer, "Coles", 1, 999),
+        (older, "Aldi", 2, 750),
+    ]
+
+
+def test_trips_list_is_empty_before_any_trip(client):
+    assert client.get("/api/trips").json() == []

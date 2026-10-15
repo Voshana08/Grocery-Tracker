@@ -79,3 +79,11 @@ class TripOut(BaseModel):
     trip_date: date
     items: list[TripItemOut]
     total_cents: int  # calculated from the items, never stored
+
+
+class TripSummaryOut(BaseModel):
+    id: int
+    store: Store
+    trip_date: date
+    item_count: int
+    total_cents: int

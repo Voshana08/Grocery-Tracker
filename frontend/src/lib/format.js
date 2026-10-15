@@ -18,3 +18,33 @@ export function formatMoney(cents) {
 export function todayInMelbourne() {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Melbourne' }).format(new Date())
 }
+
+// A trip's date is a plain calendar day ("2026-10-15"), not a moment in time, so it's read at
+// midday UTC and formatted in UTC: the day can never slip to the 14th or 16th.
+function calendarDay(isoDate) {
+  return new Date(`${isoDate}T12:00:00Z`)
+}
+
+// "2026-10-15" -> "Thu 15 Oct" (list rows)
+export function formatShortDate(isoDate) {
+  return new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'UTC',
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  })
+    .format(calendarDay(isoDate))
+    .replace(',', '')
+}
+
+// "2026-10-15" -> "Thursday 15 October" (headers)
+export function formatLongDate(isoDate) {
+  return new Intl.DateTimeFormat('en-AU', {
+    timeZone: 'UTC',
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  })
+    .format(calendarDay(isoDate))
+    .replace(',', '')
+}

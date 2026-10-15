@@ -2,11 +2,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session
 
 from app.database import get_session
-from app.schemas import TripCreate, TripOut
+from app.schemas import TripCreate, TripOut, TripSummaryOut
 from app.services.inventory import InvalidChoice
-from app.services.trips import create_trip, get_trip
+from app.services.trips import create_trip, get_trip, list_trips
 
 router = APIRouter(prefix="/trips", tags=["trips"])
+
+
+@router.get("", response_model=list[TripSummaryOut])
+def read_trips(session: Session = Depends(get_session)):
+    return list_trips(session)
 
 
 @router.post("", response_model=TripOut)
