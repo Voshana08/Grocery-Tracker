@@ -15,48 +15,54 @@ spec — both are the source of truth for how this app is built.
 ## Tech stack
 
 - Python 3.13, FastAPI + Uvicorn
-- Jinja2 templates, HTMX for interactivity, plain CSS (no framework)
+- FastAPI is a JSON API (every route under `/api`); React front end (Vite, plain JavaScript) coming in #8
 - SQLModel, SQLite locally / PostgreSQL in production
 - Ruff for lint/format, pytest for tests
 
 ## Getting started
 
 ```bash
-python -m venv .venv
+cd backend
+python3.13 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
 cp .env.example .env
 
 python -m app.seed                 # seed locations and categories (safe to re-run)
-uvicorn app.main:app --reload      # http://127.0.0.1:8000
+python -m app.seed_samples         # optional: 5 sample items for local testing
+uvicorn app.main:app --reload      # API on http://127.0.0.1:8000, docs at /docs
 ```
 
 ## Development
 
+From `backend/`:
+
 ```bash
-pytest                             # run tests
-ruff check . && ruff format .      # lint and format
+pytest                                           # run tests
+ruff check . && ruff format --check .            # lint and format check
 ```
 
 ## Project structure
 
 ```
-app/
-  main.py          # app setup, static files, routers
-  config.py        # reads .env
-  database.py      # engine, session, table creation
-  models.py        # SQLModel tables
-  seed.py          # python -m app.seed
-  services/        # business logic
-  routes/          # FastAPI routers
-  templates/        # Jinja2 templates
-  static/          # app.css
-tests/
-docs/              # development brief, design spec, mockups
+backend/
+  app/
+    main.py          # app setup, /api routers
+    config.py        # reads .env
+    database.py      # engine, session, table creation
+    models.py        # SQLModel tables
+    schemas.py       # API request/response shapes
+    seed.py          # python -m app.seed
+    seed_samples.py  # python -m app.seed_samples (local only, removed after #10)
+    services/        # business logic
+    routes/          # FastAPI routers
+  tests/
+docs/                # design spec, mockups
+CLAUDE.md            # development brief
+PRODUCT.md           # who the app is for and what success means
 ```
 
 ## Status
 
-Iteration 1 is in progress, built issue by issue (see `CLAUDE.md` section 10). The
-location page (`GET /t/{slug}`) is live; the dashboard and trip-logging pages have templates
-but no routes yet.
+Iteration 1 is in progress, built issue by issue (see `CLAUDE.md` section 10). Issue #8: the
+location API (`GET /api/locations/{slug}`) is done; the React location page is next.

@@ -1,9 +1,9 @@
 from sqlmodel import Session, SQLModel, create_engine
 
-from app.config import DATABASE_URL
+from app.config import DATABASE_URL, SQL_ECHO
 
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+engine = create_engine(DATABASE_URL, connect_args=connect_args, echo=SQL_ECHO)
 
 
 def create_db_and_tables():
