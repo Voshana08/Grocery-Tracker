@@ -7,9 +7,9 @@ from app.schemas import LocationItemOut
 class InvalidChoice(ValueError):
     """A form value that points at something that doesn't exist (e.g. an unknown category)."""
 
-    def __init__(self, field: str, message: str):
+    def __init__(self, loc: tuple, message: str):
         super().__init__(message)
-        self.field = field
+        self.loc = loc  # path to the field, e.g. ("category_id",) or ("items", 2, "location_slug")
 
 
 def get_location_by_slug(session: Session, slug: str) -> Location | None:
@@ -71,6 +71,21 @@ def find_product(session: Session, name: str) -> Product | None:
     return session.exec(select(Product).where(func.lower(Product.name) == name.lower())).first()
 
 
+def get_or_create_product(
+    session: Session, name: str, category_id: int, location: Location, loc: tuple = ()
+) -> Product:
+    """The product with this name (ignoring capitals), or a new one in this category.
+    loc is where category_id came from, for the error if it doesn't exist."""
+    product = find_product(session, name)
+    if product is None:
+        if session.get(Category, category_id) is None:
+            raise InvalidChoice((*loc, "category_id"), "Choose a category")
+        product = Product(name=name, category_id=category_id, default_location_id=location.id)
+        session.add(product)
+        session.flush()  # gives the new product an id
+    return product
+
+
 def add_item(
     session: Session, product_name: str, category_id: int, location_slug: str, status: StockStatus
 ) -> LocationItemOut:
@@ -78,17 +93,8 @@ def add_item(
     product is already in the location, its status is updated instead of adding a duplicate."""
     location = get_location_by_slug(session, location_slug)
     if location is None:
-        raise InvalidChoice("location_slug", "Choose a location")
-
-    product = find_product(session, product_name)
-    if product is None:
-        if session.get(Category, category_id) is None:
-            raise InvalidChoice("category_id", "Choose a category")
-        product = Product(
-            name=product_name, category_id=category_id, default_location_id=location.id
-        )
-        session.add(product)
-        session.flush()  # gives the new product an id
+        raise InvalidChoice(("location_slug",), "Choose a location")
+    product = get_or_create_product(session, product_name, category_id, location)
 
     item = session.exec(
         select(InventoryItem).where(

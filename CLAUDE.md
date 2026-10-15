@@ -184,7 +184,8 @@ All JSON. All under `/api`. Interactive docs at `http://127.0.0.1:8000/docs` whi
 | `GET /api/products?search=` | Existing products (`id`, `name`, `category_id`) for suggestions (`<datalist>`) and category auto-fill; `search` matches part of the name, ignoring capitals | #10 |
 | `POST /api/items` | Body `{product_name, category_id, location_slug, status}`. Reuses the Product by name (ignoring capitals) or creates it; adds it to the location. **If it is already in that location, its status is updated instead** (owner's choice). Unknown category or location: 422 on that field | #10 |
 | `POST /api/trips` | Log a trip (rules 1 and 6); returns the saved trip with `total_cents` | #11, #12 |
-| `GET /api/trips`, `GET /api/trips/{id}` | Trips list (newest first, with totals and item counts) and trip detail | #13 |
+| `GET /api/trips/{id}` | One trip with its items and `total_cents` (the Trip saved page uses it after a reload) | #11 |
+| `GET /api/trips` | Trips list (newest first, with totals and item counts) | #13 |
 | `GET /api/dashboard` | Month spend, trips this week (rule 4), low and out items (rule 5) | #14 |
 | `GET /api/spending?month=YYYY-MM` | Monthly spend by category (rule 3); defaults to the current month | #15 |
 
@@ -213,8 +214,8 @@ Work in this order; each issue's checklist on GitHub is the acceptance criteria.
    - *Frontend half*: Node 24 LTS via `nvm`, pinned in `frontend/.nvmrc`. Vite `react` template with its demo files removed, the dev proxy (section 12), `tokens.css`, `api/client.js`, React Router, and `LocationPage` from the Fridge mockup (sorted out → low → plenty on load; see `docs/DESIGN.md`).
 2. **#9 Status buttons**: `set_status` service and test, `PATCH /api/inventory/{id}`, `StatusControl` component.
 3. **#10 Add item**: categories and product-suggestion endpoints, `POST /api/items`, `AddItemPage` with location pre-filled from `?location=`.
-4. **#11 Log a trip**: `TripCreate` schema, validation (rule 6), `TripFormPage` with add-row, price-to-cents helper.
-5. **#12 Restock**: rule 1 inside `create_trip`; tests for new item, existing item set back to plenty, and rollback. Trip saved page.
+4. **#11 Log a trip**: `TripCreate` schema, validation (rule 6), `TripFormPage` with add-row, remove-row, discard confirm, price-to-cents helper (`lib/format.js`). The Trip saved page was pulled forward into #11.
+5. **#12 Restock**: rule 1 inside `create_trip` (it already saves in one transaction); tests for new item, existing item set back to plenty, and rollback. Add the "Every item is now marked Plenty at home." line to the Trip saved page.
 6. **#13 Trips list and detail.**
 7. **#14 Dashboard**: `GET /api/locations` counts and `GET /api/dashboard`; month spend, week row, location tiles, "Buy next time" list.
 8. **#15 Spending page**: rule 3, month navigation, empty state; tests for totals.

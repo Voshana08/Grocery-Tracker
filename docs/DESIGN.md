@@ -24,7 +24,7 @@ Put these in `frontend/src/styles/tokens.css` under `:root` exactly once. Compon
 
 | Token | Hex | Use |
 |---|---|---|
-| `--color-bg` | `#F6F2DB` | Page background (butter tint); content areas are white |
+| `--color-bg` | `#FFFFFF` | Page background: white, as in the owner's mockups (changed 15 Oct 2026). Cards stand out by their border |
 | `--color-surface` | `#FFFFFF` | Cards, inputs, bottom nav, dashboard content area |
 | `--color-border` | `#E6DFC2` | Card borders, nav top border |
 | `--color-border-input` | `#8E7D86` | Inputs and selects (3.9:1 on white, so the field edge is visible) |
@@ -131,15 +131,15 @@ All screens are designed at **390 × 844** (iPhone) and must not scroll sideways
 Mockup: "Add item (v1, your palette)" on the canvas (approved 15 Oct 2026). Header with Cancel (back to the tag page it came from); centred title "Add item". Fields, each with a 14px/600 ink label above and a 48px input: Product name (with suggestions; choosing a known product fills in its Category), Category (select), Location (select, pre-selected from the tag page), Status (Plenty / Low / Out buttons across the full width, 48px, default Plenty). Primary button "Add item" at the bottom ("Adding…" while saving). Empty name: inline error "Add a name for this item". Adding a product that is already in that location updates its status. On success return to that location page.
 
 ### Log a trip `/trips/new`  (mockup: Log a trip)
-1. Header: Cancel, centred "New trip".
-2. Store picker, Date (defaults to today).
-3. "Items" with count; one card per row: Product (suggestions), then a 3-column row: Category, Goes in (location), Price ($).
+1. Header: Cancel, centred "New trip". Cancel with anything typed shows an inline card "Discard this trip?" ("The items you've typed will be lost.") with a **Discard** button (error-text fill, white text) and an outline **Keep editing** button; with nothing typed it leaves at once. A reload still loses the trip (owner's choice: no saved draft).
+2. Store picker (no store chosen at first; "Choose a store" if missing), Date (defaults to today in Melbourne, no future dates).
+3. "Items" with count; one card per row: Product (suggestions; a known product fills in its category), then a 3-column row: Category, Goes in (location), Price ($). All fields 16px so iOS doesn't zoom; long options such as "Cleaning cupboard" are cut off in the narrow selects (owner's choice). A muted "Remove" text button sits top-right of each card (44px tall), hidden when there is only one row. Completely blank rows are ignored when saving.
 4. Dashed "Add another item" (adds a blank row in React state, no server call).
 5. Total card: "Trip total" and amount, updated live as prices are typed (display only; the API calculates the saved total); primary "Save trip".
-6. Errors: banner above the items plus inline errors; rows kept.
+6. Errors: banner above the items ("1 item needs a price before saving", or "2 items need fixing before saving" for other mistakes) plus inline errors under the row ("Add a product name", "Add a price for this item", "Use a price like 4.50"); rows kept.
 
 ### Trip saved `/trips/{id}/saved`
-Card with check icon in a stocked-tint circle, "Trip saved", "3 items from Woolworths", total, "Every item is now marked Plenty at home.", primary "Back to dashboard". A secondary text link "View trip".
+Card with check icon in a stocked-tint circle, "Trip saved", "3 items from Woolworths", total, "Every item is now marked Plenty at home." (added in #12, once restocking exists), primary "Back to dashboard". A secondary text link "View trip". Built in #11; survives a reload by fetching the trip.
 
 ### Trips `/trips`
 Bottom nav (Trips active). Title "Trips". Rows: store and date ("Woolworths · Thu 8 Oct"), item count, total on the right. Newest first. Empty: "No trips logged yet" with "Log a shopping trip".

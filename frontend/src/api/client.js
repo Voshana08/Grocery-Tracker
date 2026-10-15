@@ -4,14 +4,15 @@ export class ApiError extends Error {
   constructor(message, status, fields = {}) {
     super(message)
     this.status = status // 0 means the server could not be reached
-    this.fields = fields // 422 only: { product_name: "Choose a ..." } for inline field errors
+    this.fields = fields // 422 only: { product_name: "...", "items.2.price_cents": "..." }
   }
 }
 
-// FastAPI's 422 detail is a list like [{ loc: ["body", "category_id"], msg: "..." }].
+// FastAPI's 422 detail is a list like [{ loc: ["body", "items", 2, "price_cents"], msg: "..." }].
+// Keyed by path without "body": "category_id", or "items.2.price_cents" for row 3 of a trip.
 function fieldErrors(detail) {
   if (!Array.isArray(detail)) return {}
-  return Object.fromEntries(detail.map((error) => [error.loc.at(-1), error.msg]))
+  return Object.fromEntries(detail.map((error) => [error.loc.slice(1).join('.'), error.msg]))
 }
 
 export async function api(path, options = {}) {
