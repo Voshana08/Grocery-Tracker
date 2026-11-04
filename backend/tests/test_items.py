@@ -96,12 +96,21 @@ def test_lists_for_the_form(client, session):
         "Fruit & veg",
         "Meat & seafood",
     ]
-    assert client.get("/api/locations").json() == [
-        {"name": "Fridge", "slug": "fridge"},
-        {"name": "Pantry", "slug": "pantry"},
-        {"name": "Cleaning cupboard", "slug": "cleaning"},
+    assert [(loc["name"], loc["slug"]) for loc in client.get("/api/locations").json()] == [
+        ("Fridge", "fridge"),
+        ("Pantry", "pantry"),
+        ("Cleaning cupboard", "cleaning"),
     ]
     assert [p["name"] for p in client.get("/api/products?search=MILK").json()] == [
         "Full cream milk 2L"
     ]
     assert client.get("/api/products?search=rice").json() == []
+
+
+def test_products_and_locations_share_ids_so_the_form_can_fill_in_the_usual_place(client, session):
+    add_item(session, "Rice", category_id(session, "Pantry staples"), "pantry", StockStatus.out)
+
+    product = client.get("/api/products").json()[0]
+    pantry = next(loc for loc in client.get("/api/locations").json() if loc["slug"] == "pantry")
+
+    assert product["default_location_id"] == pantry["id"]

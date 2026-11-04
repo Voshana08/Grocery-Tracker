@@ -19,9 +19,11 @@ class ProductOut(BaseModel):
     id: int
     name: str
     category_id: int
+    default_location_id: int
 
 
 class LocationSummaryOut(BaseModel):
+    id: int
     name: str
     slug: str
 

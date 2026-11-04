@@ -108,9 +108,18 @@ export default function TripFormPage() {
   }
 
   function changeProduct(key, value) {
-    // Choosing a product you've bought before fills in its category.
+    // Choosing a product you've bought before fills in its category and usual location.
     const known = options.products.find((p) => p.name.toLowerCase() === value.trim().toLowerCase())
-    updateRow(key, known ? { product: value, categoryId: String(known.category_id) } : { product: value })
+    if (!known) {
+      updateRow(key, { product: value })
+      return
+    }
+    const usual = options.locations.find((l) => l.id === known.default_location_id)
+    updateRow(key, {
+      product: value,
+      categoryId: String(known.category_id),
+      locationSlug: usual.slug,
+    })
   }
 
   function cancel() {
