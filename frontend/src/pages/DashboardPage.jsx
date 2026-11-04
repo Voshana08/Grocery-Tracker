@@ -67,7 +67,7 @@ function Dashboard({ dashboard, locations }) {
         </div>
       </section>
 
-      <Link to="/trips/new" className="button-primary">
+      <Link to="/trips/new" className="button-primary dashboard-action">
         <Plus />
         Log a shopping trip
       </Link>

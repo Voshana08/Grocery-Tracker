@@ -856,6 +856,11 @@ a.list-row:hover {
   font-size: 13px;
 }
 
+/* Other pages push this button to the bottom. Here more sections follow it, so it stays put. */
+.dashboard-action {
+  margin-top: 0;
+}
+
 .dashboard-section {
   display: flex;
   flex-direction: column;
