@@ -65,6 +65,23 @@ function LocationPage({ slug }) {
     })
   }
 
+  // Take the item off the screen at once, then delete it. If that fails, put it back in place.
+  function removeItem(item) {
+    const index = location.items.indexOf(item)
+    setLocation((current) => ({
+      ...current,
+      items: current.items.filter((other) => other.id !== item.id),
+    }))
+    setSaveError(null)
+    api(`/inventory/${item.id}`, { method: 'DELETE' }).catch(() => {
+      setLocation((current) => ({
+        ...current,
+        items: current.items.toSpliced(index, 0, item),
+      }))
+      setSaveError(`Couldn't remove ${item.name}. Try again.`)
+    })
+  }
+
   if (error?.status === 404) {
     return (
       <main className="page">
@@ -117,16 +134,28 @@ function LocationPage({ slug }) {
           ) : (
             <ul className="item-list">
               {location.items.map((item) => (
-                <li key={item.id} className="card item">
-                  <div className="item-text">
-                    <span className="item-name">{item.name}</span>
-                    <span className="item-category muted">{item.category}</span>
+                // Swiping is plain horizontal scrolling (see .item-swipe in app.css), so the
+                // browser handles the gesture and it can't get in the way of scrolling the page.
+                <li key={item.id} className="item-swipe">
+                  <div className="card item">
+                    <div className="item-text">
+                      <span className="item-name">{item.name}</span>
+                      <span className="item-category muted">{item.category}</span>
+                    </div>
+                    <StatusControl
+                      itemName={item.name}
+                      status={item.status}
+                      onChange={(newStatus) => changeStatus(item, newStatus)}
+                    />
                   </div>
-                  <StatusControl
-                    itemName={item.name}
-                    status={item.status}
-                    onChange={(newStatus) => changeStatus(item, newStatus)}
-                  />
+                  <button
+                    type="button"
+                    className="swipe-remove"
+                    aria-label={`Remove ${item.name} from ${location.name}`}
+                    onClick={() => removeItem(item)}
+                  >
+                    Remove
+                  </button>
                 </li>
               ))}
             </ul>

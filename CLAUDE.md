@@ -180,6 +180,7 @@ All JSON. All under `/api`. Interactive docs at `http://127.0.0.1:8000/docs` whi
 | `GET /api/locations` | The 3 locations (`name`, `slug`) for the add-item form; #14 adds low/out counts for the dashboard tiles | #10, #14 |
 | `GET /api/locations/{slug}` | `{"name", "slug", "items": [{"id", "name", "category", "status"}]}`, items sorted by product name; 404 for an unknown slug | #8 |
 | `PATCH /api/inventory/{id}` | Body `{"status": "low"}`; returns the updated item | #9 |
+| `DELETE /api/inventory/{id}` | Stop tracking a product in that location; the product and past trips are kept. Returns 204 with no body | #41 |
 | `GET /api/categories` | For the category selects | #10 |
 | `GET /api/products?search=` | Existing products (`id`, `name`, `category_id`) for suggestions (`<datalist>`) and category auto-fill; `search` matches part of the name, ignoring capitals | #10 |
 | `POST /api/items` | Body `{product_name, category_id, location_slug, status}`. Reuses the Product by name (ignoring capitals) or creates it; adds it to the location. **If it is already in that location, its status is updated instead** (owner's choice). Unknown category or location: 422 on that field | #10 |
