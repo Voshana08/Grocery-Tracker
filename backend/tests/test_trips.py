@@ -221,3 +221,30 @@ def test_trips_list_is_newest_first_with_counts_and_totals(client, session):
 
 def test_trips_list_is_empty_before_any_trip(client):
     assert client.get("/api/trips").json() == []
+
+
+def test_deleting_a_trip_removes_it_and_its_items_but_leaves_stock(client, session):
+    create_trip(
+        session,
+        Store.aldi,
+        date(2026, 10, 15),
+        [row(session, "Butter", "Dairy & eggs", "fridge", 450)],
+    )
+    kept = create_trip(
+        session,
+        Store.coles,
+        date(2026, 10, 16),
+        [row(session, "Rice", "Pantry staples", "pantry", 300)],
+    )
+    first = client.get("/api/trips").json()[1]["id"]
+
+    assert client.delete(f"/api/trips/{first}").status_code == 204
+
+    assert client.get(f"/api/trips/{first}").status_code == 404
+    assert [t["id"] for t in client.get("/api/trips").json()] == [kept.id]
+    assert len(session.exec(select(TripItem)).all()) == 1
+    assert stock(session, "Butter", "fridge") == StockStatus.plenty
+
+
+def test_delete_unknown_trip_is_404(client):
+    assert client.delete("/api/trips/999").status_code == 404

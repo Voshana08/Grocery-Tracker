@@ -29,6 +29,7 @@ function LocationPage({ slug }) {
   const [location, setLocation] = useState(null)
   const [error, setError] = useState(null)
   const [saveError, setSaveError] = useState(null)
+  const [editing, setEditing] = useState(false) // Edit shows a Remove button on every card
 
   useEffect(() => {
     let ignore = false // if the page closes mid-request, drop the late answer
@@ -142,11 +143,23 @@ function LocationPage({ slug }) {
                       <span className="item-name">{item.name}</span>
                       <span className="item-category muted">{item.category}</span>
                     </div>
-                    <StatusControl
-                      itemName={item.name}
-                      status={item.status}
-                      onChange={(newStatus) => changeStatus(item, newStatus)}
-                    />
+                    <div className="item-controls">
+                      <StatusControl
+                        itemName={item.name}
+                        status={item.status}
+                        onChange={(newStatus) => changeStatus(item, newStatus)}
+                      />
+                      {editing && (
+                        <button
+                          type="button"
+                          className="link-button item-remove"
+                          aria-label={`Remove ${item.name} from ${location.name}`}
+                          onClick={() => removeItem(item)}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <button
                     type="button"
@@ -165,6 +178,15 @@ function LocationPage({ slug }) {
             <Plus />
             Add item to {location.name}
           </Link>
+          {location.items.length > 0 && (
+            <button
+              type="button"
+              className="link-button centred"
+              onClick={() => setEditing(!editing)}
+            >
+              {editing ? 'Done' : 'Edit'}
+            </button>
+          )}
         </>
       )}
     </main>

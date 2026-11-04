@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
 import { api } from '../api/client.js'
 import { ChevronLeft } from '../components/Icons.jsx'
 import { formatLongDate, formatMoney } from '../lib/format.js'
 
 export default function TripDetailPage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [trip, setTrip] = useState(null)
   const [error, setError] = useState(null)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState(null)
 
   useEffect(() => {
     let ignore = false
@@ -18,6 +22,17 @@ export default function TripDetailPage() {
       ignore = true
     }
   }, [id])
+
+  function deleteTrip() {
+    setDeleting(true)
+    setDeleteError(null)
+    api(`/trips/${trip.id}`, { method: 'DELETE' })
+      .then(() => navigate('/trips', { replace: true }))
+      .catch(() => {
+        setDeleting(false)
+        setDeleteError("Couldn't delete this trip. Try again.")
+      })
+  }
 
   return (
     <main className="page">
@@ -74,6 +89,46 @@ export default function TripDetailPage() {
             <span className="muted">Trip total</span>
             <span className="trip-total-amount">{formatMoney(trip.total_cents)}</span>
           </section>
+
+          {deleteError && (
+            <p className="error-banner" role="alert">
+              {deleteError}
+            </p>
+          )}
+          {confirmingDelete ? (
+            <div className="card confirm" role="alert" aria-labelledby="delete-title">
+              <h2 id="delete-title">Delete this trip?</h2>
+              <p className="muted">
+                Its {formatMoney(trip.total_cents)} will come off your spending. Stock at home won't
+                change.
+              </p>
+              <div className="confirm-actions">
+                <button
+                  type="button"
+                  className="button-danger"
+                  disabled={deleting}
+                  onClick={deleteTrip}
+                >
+                  {deleting ? 'Deleting…' : 'Delete'}
+                </button>
+                <button
+                  type="button"
+                  className="button-outline"
+                  onClick={() => setConfirmingDelete(false)}
+                >
+                  Keep trip
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="link-button centred muted"
+              onClick={() => setConfirmingDelete(true)}
+            >
+              Delete trip
+            </button>
+          )}
         </>
       )}
     </main>

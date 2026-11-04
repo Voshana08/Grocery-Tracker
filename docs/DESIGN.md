@@ -124,8 +124,9 @@ All screens are designed at **390 × 844** (iPhone) and must not scroll sideways
 2. Title (location name); summary line "6 items · 2 running low or out" or "6 items · all stocked".
 3. One card per item: name, category, segmented control. Sorted out first, then low, then plenty, each group by name, so "what's low?" is answered without scrolling. The order is set when the page loads; tapping a status does **not** move the card (it would jump from under the thumb). The new order shows on the next visit.
 4. Outline button "Add item to {Location}" (goes to the add form with this location pre-selected).
-5. Empty: "Nothing in the {location} yet" with the add button.
-6. Unknown slug: friendly 404 "This tag isn't set up" with a link Home.
+5. Removing an item: swipe the card left to reveal a Remove button, then tap it. Or tap the "Edit" text button below "Add item to {Location}" (hidden when the list is empty): every card shows a muted "Remove" under its status control, and the button reads "Done". The item leaves the screen at once; if that fails it comes back and the error banner shows.
+6. Empty: "Nothing in the {location} yet" with the add button.
+7. Unknown slug: friendly 404 "This tag isn't set up" with a link Home.
 
 ### Add item `/items/new`
 Mockup: "Add item (v1, your palette)" on the canvas (approved 15 Oct 2026). Header with Cancel (back to the tag page it came from); centred title "Add item". Fields, each with a 14px/600 ink label above and a 48px input: Product name (with suggestions; choosing a known product fills in its Category), Category (select), Location (select, pre-selected from the tag page), Status (Plenty / Low / Out buttons across the full width, 48px, default Plenty). Primary button "Add item" at the bottom ("Adding…" while saving). Empty name: inline error "Add a name for this item". Adding a product that is already in that location updates its status. On success return to that location page.
@@ -145,7 +146,7 @@ Card with check icon in a stocked-tint circle, "Trip saved", "3 items from Woolw
 Mockup: "Trips (v1, your palette)" (approved 15 Oct 2026). Bottom nav (Trips active). Title "Trips" (32px, like "Fridge"). One card of rows, divider lines between: store and date ("Woolworths · Thu 8 Oct", 15px/600), item count under it (13px muted), total on the right (15px/600). Each row links to the trip. Newest first (same day: latest logged first). Empty: a card with "No trips logged yet" and the primary "Log a shopping trip" button.
 
 ### Trip detail `/trips/{id}`
-Mockup: "Trip detail (v1, your palette)" (approved 15 Oct 2026). "‹ Trips" back link; title is the store (32px); full date under it ("Wednesday 14 October"); one card of items: name, where it went (13px muted), line total on the right, with "2 × $4.15" under it when more than one was bought; a "Trip total" card at the bottom. No bottom nav. Unknown trip: "Trip not found" with a link to all trips.
+Mockup: "Trip detail (v1, your palette)" (approved 15 Oct 2026). "‹ Trips" back link; title is the store (32px); full date under it ("Wednesday 14 October"); one card of items: name, where it went (13px muted), line total on the right, with "2 × $4.15" under it when more than one was bought; a "Trip total" card, then a muted, centred "Delete trip" text button. Tapping it shows an inline card "Delete this trip?" ("Its $42.10 will come off your spending. Stock at home won't change.") with **Delete** (error-text fill, white text) and outline **Keep trip** buttons; after deleting, go to Trips. No bottom nav. Unknown trip: "Trip not found" with a link to all trips.
 
 ### Spending `/spending`
 Bottom nav (Spending active). Month switcher: previous arrow, "October 2026", next arrow (disabled for future months). Summary card: total and trip count. Category list: name, amount, and a simple bar (primary colour) showing its share of the month. Empty: "No trips in September" with a muted explanation.
