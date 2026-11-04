@@ -165,7 +165,7 @@ Timestamps are timezone-aware UTC (`datetime.now(timezone.utc)` via `default_fac
 2. **Trip total** = sum of `price_cents × quantity_bought` over its items. Calculated, never stored; included in trip responses as `total_cents`.
 3. **Monthly spend** for a calendar month (Melbourne time): total cents, number of trips, and total per category (via the product's category). Categories with zero spend are omitted. A month with no trips returns zero and an empty list (the page shows an empty state).
 4. **Trips this week**: count and total for Monday–Sunday of the current Melbourne week, plus which weekdays had a trip (for the dashboard's 7-day row).
-5. **Low and out**: every InventoryItem whose status is `low` or `out`, grouped by location, ordered out first, then low, then product name.
+5. **Low and out**: every InventoryItem whose status is `low` or `out`, as one list (owner's choice) ordered out first, then low, then by location and product name.
 6. **Validation on the trip form**: store required; date required; at least one item; every item needs a product name and a price in cents ≥ 0. The API rejects bad input with **422** and field-level errors (which row, which field). React keeps every typed row in state, so nothing is lost on error, shows an error banner ("1 item needs a price before saving") and highlights the field.
 7. **Login**: every `/api` route except `POST /api/auth/login` and `GET /api/health` requires a logged-in session and returns **401** otherwise. React's API client turns a 401 (from any non-auth route) into a redirect to `/login?next=<path>` and returns there after login. Sessions last 30 days so tag taps do not ask to log in. A wrong password returns 401 with "Username or password is incorrect" (never say which part).
 
@@ -177,7 +177,7 @@ All JSON. All under `/api`. Interactive docs at `http://127.0.0.1:8000/docs` whi
 |---|---|---|
 | `GET /api/health` | `{"status": "ok"}`, no login | done (move to `/api/health` in #8) |
 | `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` | Single-user login; `me` returns `username` and `display_name`, or 401 | #16 |
-| `GET /api/locations` | The 3 locations (`name`, `slug`) for the add-item form; #14 adds low/out counts for the dashboard tiles | #10, #14 |
+| `GET /api/locations` | The 3 locations (`id`, `name`, `slug`) for the forms, with `low_count` and `out_count` for the dashboard tiles | #10, #14 |
 | `GET /api/locations/{slug}` | `{"name", "slug", "items": [{"id", "name", "category", "status"}]}`, items sorted by product name; 404 for an unknown slug | #8 |
 | `PATCH /api/inventory/{id}` | Body `{"status": "low"}`; returns the updated item | #9 |
 | `DELETE /api/inventory/{id}` | Stop tracking a product in that location; the product and past trips are kept. Returns 204 with no body | #41 |
@@ -188,7 +188,7 @@ All JSON. All under `/api`. Interactive docs at `http://127.0.0.1:8000/docs` whi
 | `GET /api/trips/{id}` | One trip with its items and `total_cents` (the Trip saved page uses it after a reload) | #11 |
 | `DELETE /api/trips/{id}` | Delete a trip and its items; stock statuses stay as they are. Returns 204 with no body | #41 |
 | `GET /api/trips` | Trips list, newest first (same day: latest logged first): `id`, `store`, `trip_date`, `item_count`, `total_cents`, counted and summed in one SQL query | #13 |
-| `GET /api/dashboard` | Month spend, trips this week (rule 4), low and out items (rule 5) | #14 |
+| `GET /api/dashboard` | `today` in Melbourne, month spend, trips this week (rule 4), low and out items (rule 5) | #14 |
 | `GET /api/spending?month=YYYY-MM` | Monthly spend by category (rule 3); defaults to the current month | #15 |
 
 ## 9. Frontend routes (React Router)

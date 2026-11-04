@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.database import create_db_and_tables
-from app.routes import inventory, locations, products, trips
+from app.routes import dashboard, inventory, locations, products, trips
 
 
 @asynccontextmanager
@@ -13,6 +13,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Grocery Tracker", lifespan=lifespan)
+app.include_router(dashboard.router, prefix="/api")
 app.include_router(locations.router, prefix="/api")
 app.include_router(inventory.router, prefix="/api")
 app.include_router(products.router, prefix="/api")
