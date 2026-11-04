@@ -72,3 +72,34 @@ def test_patch_unknown_item_is_404(client):
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Item not found"}
+
+
+def test_removing_an_item_keeps_the_product_and_past_trips(client, add_item):
+    item = add_item("Butter", "Dairy & eggs", "fridge", StockStatus.low)
+    trip = {
+        "store": "Aldi",
+        "trip_date": "2026-11-04",
+        "items": [
+            {
+                "product_name": "Butter",
+                "category_id": 3,
+                "location_slug": "fridge",
+                "price_cents": 450,
+            }
+        ],
+    }
+    trip_id = client.post("/api/trips", json=trip).json()["id"]
+
+    assert client.delete(f"/api/inventory/{item.id}").status_code == 204
+
+    assert client.get("/api/locations/fridge").json()["items"] == []
+    assert [p["name"] for p in client.get("/api/products").json()] == ["Butter"]
+    assert client.get(f"/api/trips/{trip_id}").json()["total_cents"] == 450
+
+    # Buying it again puts it back, because saving a trip restocks home.
+    client.post("/api/trips", json=trip)
+    assert [i["name"] for i in client.get("/api/locations/fridge").json()["items"]] == ["Butter"]
+
+
+def test_delete_unknown_item_is_404(client):
+    assert client.delete("/api/inventory/999").status_code == 404

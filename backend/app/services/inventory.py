@@ -51,6 +51,17 @@ def set_status(session: Session, item_id: int, status: StockStatus) -> LocationI
     return _to_out(*row)
 
 
+def remove_item(session: Session, item_id: int) -> bool:
+    """Stop tracking a product in one location. The product and past trips are kept, so spending
+    doesn't change. Returns False if the item doesn't exist."""
+    item = session.get(InventoryItem, item_id)
+    if item is None:
+        return False
+    session.delete(item)
+    session.commit()
+    return True
+
+
 def list_locations(session: Session) -> list[Location]:
     return session.exec(select(Location).order_by(Location.id)).all()
 

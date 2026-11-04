@@ -1,6 +1,6 @@
 from datetime import date
 
-from sqlmodel import Session, func, select
+from sqlmodel import Session, delete, func, select
 
 from app.models import Category, Location, Product, ShoppingTrip, StockStatus, Store, TripItem
 from app.schemas import TripItemIn, TripItemOut, TripOut, TripSummaryOut
@@ -48,6 +48,19 @@ def create_trip(
         session.rollback()  # undo the trip, its items, new products and the restock
         raise
     return get_trip(session, trip.id)
+
+
+def delete_trip(session: Session, trip_id: int) -> bool:
+    """Delete a trip and its items in one transaction, which also takes it off the spending.
+    Stock isn't touched: nobody knows what each status was before the trip.
+    Returns False if the trip doesn't exist."""
+    trip = session.get(ShoppingTrip, trip_id)
+    if trip is None:
+        return False
+    session.exec(delete(TripItem).where(TripItem.trip_id == trip_id))
+    session.delete(trip)
+    session.commit()
+    return True
 
 
 def get_trip(session: Session, trip_id: int) -> TripOut | None:

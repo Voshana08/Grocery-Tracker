@@ -29,6 +29,7 @@ function LocationPage({ slug }) {
   const [location, setLocation] = useState(null)
   const [error, setError] = useState(null)
   const [saveError, setSaveError] = useState(null)
+  const [editing, setEditing] = useState(false) // Edit shows a Remove button on every card
 
   useEffect(() => {
     let ignore = false // if the page closes mid-request, drop the late answer
@@ -62,6 +63,23 @@ function LocationPage({ slug }) {
       // onlyIf: if another tap changed this item meanwhile, keep that newer choice.
       setItemStatus(item.id, oldStatus, newStatus)
       setSaveError(`Couldn't save ${item.name}. Try again.`)
+    })
+  }
+
+  // Take the item off the screen at once, then delete it. If that fails, put it back in place.
+  function removeItem(item) {
+    const index = location.items.indexOf(item)
+    setLocation((current) => ({
+      ...current,
+      items: current.items.filter((other) => other.id !== item.id),
+    }))
+    setSaveError(null)
+    api(`/inventory/${item.id}`, { method: 'DELETE' }).catch(() => {
+      setLocation((current) => ({
+        ...current,
+        items: current.items.toSpliced(index, 0, item),
+      }))
+      setSaveError(`Couldn't remove ${item.name}. Try again.`)
     })
   }
 
@@ -117,16 +135,40 @@ function LocationPage({ slug }) {
           ) : (
             <ul className="item-list">
               {location.items.map((item) => (
-                <li key={item.id} className="card item">
-                  <div className="item-text">
-                    <span className="item-name">{item.name}</span>
-                    <span className="item-category muted">{item.category}</span>
+                // Swiping is plain horizontal scrolling (see .item-swipe in app.css), so the
+                // browser handles the gesture and it can't get in the way of scrolling the page.
+                <li key={item.id} className="item-swipe">
+                  <div className="card item">
+                    <div className="item-text">
+                      <span className="item-name">{item.name}</span>
+                      <span className="item-category muted">{item.category}</span>
+                    </div>
+                    <div className="item-controls">
+                      <StatusControl
+                        itemName={item.name}
+                        status={item.status}
+                        onChange={(newStatus) => changeStatus(item, newStatus)}
+                      />
+                      {editing && (
+                        <button
+                          type="button"
+                          className="link-button item-remove"
+                          aria-label={`Remove ${item.name} from ${location.name}`}
+                          onClick={() => removeItem(item)}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <StatusControl
-                    itemName={item.name}
-                    status={item.status}
-                    onChange={(newStatus) => changeStatus(item, newStatus)}
-                  />
+                  <button
+                    type="button"
+                    className="swipe-remove"
+                    aria-label={`Remove ${item.name} from ${location.name}`}
+                    onClick={() => removeItem(item)}
+                  >
+                    Remove
+                  </button>
                 </li>
               ))}
             </ul>
@@ -136,6 +178,15 @@ function LocationPage({ slug }) {
             <Plus />
             Add item to {location.name}
           </Link>
+          {location.items.length > 0 && (
+            <button
+              type="button"
+              className="link-button centred"
+              onClick={() => setEditing(!editing)}
+            >
+              {editing ? 'Done' : 'Edit'}
+            </button>
+          )}
         </>
       )}
     </main>

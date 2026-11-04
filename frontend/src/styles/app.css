@@ -694,3 +694,55 @@ a.list-row:hover {
   color: var(--color-primary);
   font-weight: 600;
 }
+
+/* Swipe an item left to show Remove. It's a sideways scroller that snaps to two resting places:
+   the card filling the row, or the card pushed along so the button shows. */
+.item-swipe {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.item-swipe::-webkit-scrollbar {
+  display: none;
+}
+
+.item-swipe .item {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+
+.swipe-remove {
+  flex: 0 0 88px;
+  scroll-snap-align: end;
+  border: 0;
+  border-radius: 16px;
+  background: var(--color-error-text);
+  color: var(--color-surface);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.item-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.item-remove {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.link-button.centred {
+  align-self: center;
+  padding: 0 16px;
+}
+
+.link-button.muted {
+  color: var(--color-muted);
+}

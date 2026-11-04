@@ -3,7 +3,7 @@ from sqlmodel import Session
 
 from app.database import get_session
 from app.schemas import ItemCreate, LocationItemOut, StatusUpdate
-from app.services.inventory import InvalidChoice, add_item, set_status
+from app.services.inventory import InvalidChoice, add_item, remove_item, set_status
 
 router = APIRouter(tags=["inventory"])
 
@@ -14,6 +14,12 @@ def update_status(item_id: int, update: StatusUpdate, session: Session = Depends
     if item is None:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
+
+
+@router.delete("/inventory/{item_id}", status_code=204)
+def delete_item(item_id: int, session: Session = Depends(get_session)):
+    if not remove_item(session, item_id):
+        raise HTTPException(status_code=404, detail="Item not found")
 
 
 @router.post("/items", response_model=LocationItemOut)

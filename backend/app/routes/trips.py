@@ -4,7 +4,7 @@ from sqlmodel import Session
 from app.database import get_session
 from app.schemas import TripCreate, TripOut, TripSummaryOut
 from app.services.inventory import InvalidChoice
-from app.services.trips import create_trip, get_trip, list_trips
+from app.services.trips import create_trip, delete_trip, get_trip, list_trips
 
 router = APIRouter(prefix="/trips", tags=["trips"])
 
@@ -31,3 +31,9 @@ def read_trip(trip_id: int, session: Session = Depends(get_session)):
     if trip is None:
         raise HTTPException(status_code=404, detail="Trip not found")
     return trip
+
+
+@router.delete("/{trip_id}", status_code=204)
+def remove_trip(trip_id: int, session: Session = Depends(get_session)):
+    if not delete_trip(session, trip_id):
+        raise HTTPException(status_code=404, detail="Trip not found")
