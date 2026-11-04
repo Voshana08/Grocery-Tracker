@@ -32,3 +32,9 @@ function formatDay(isoDate, style) {
 
 export const formatShortDate = (isoDate) => formatDay(isoDate, 'short') // "Thu 15 Oct"
 export const formatLongDate = (isoDate) => formatDay(isoDate, 'long') // "Thursday 15 October"
+
+// Both take a calendar day like "2026-10-15".
+export const formatWeekday = (isoDate) =>
+  new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', weekday: 'long' }).format(calendarDay(isoDate))
+export const formatMonthName = (isoDate) =>
+  new Intl.DateTimeFormat('en-AU', { timeZone: 'UTC', month: 'long' }).format(calendarDay(isoDate))
