@@ -1,7 +1,8 @@
+from sqlalchemy import case
 from sqlmodel import Session, func, select
 
 from app.models import Category, InventoryItem, Location, Product, StockStatus, utc_now
-from app.schemas import LocationItemOut
+from app.schemas import LocationItemOut, LocationSummaryOut, LowItemOut
 
 
 class InvalidChoice(ValueError):
@@ -62,8 +63,46 @@ def remove_item(session: Session, item_id: int) -> bool:
     return True
 
 
-def list_locations(session: Session) -> list[Location]:
-    return session.exec(select(Location).order_by(Location.id)).all()
+def list_locations(session: Session) -> list[LocationSummaryOut]:
+    """Every location with its item count and how many are low and out, in one query."""
+    rows = session.exec(
+        select(
+            Location,
+            func.count(InventoryItem.id),
+            func.count(InventoryItem.id).filter(InventoryItem.status == StockStatus.low),
+            func.count(InventoryItem.id).filter(InventoryItem.status == StockStatus.out),
+        )
+        .join(InventoryItem, InventoryItem.location_id == Location.id, isouter=True)
+        .group_by(Location.id)
+        .order_by(Location.id)
+    ).all()
+    return [
+        LocationSummaryOut(
+            id=location.id,
+            name=location.name,
+            slug=location.slug,
+            item_count=items,
+            low_count=low,
+            out_count=out,
+        )
+        for location, items, low, out in rows
+    ]
+
+
+def low_and_out_items(session: Session) -> list[LowItemOut]:
+    """Everything to buy next time: out first, then low, then by location and product name."""
+    out_first = case((InventoryItem.status == StockStatus.out, 0), else_=1)
+    rows = session.exec(
+        _items_with_names()
+        .add_columns(Location)
+        .join(Location, InventoryItem.location_id == Location.id)
+        .where(InventoryItem.status != StockStatus.plenty)
+        .order_by(out_first, Location.id, Product.name)
+    ).all()
+    return [
+        LowItemOut(id=item.id, name=product.name, location=location.name, status=item.status)
+        for item, product, _category, location in rows
+    ]
 
 
 def list_categories(session: Session) -> list[Category]:

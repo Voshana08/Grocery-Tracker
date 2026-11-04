@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router'
 import AddItemPage from './pages/AddItemPage.jsx'
+import DashboardPage from './pages/DashboardPage.jsx'
 import LocationPage from './pages/LocationPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 import TripDetailPage from './pages/TripDetailPage.jsx'
@@ -11,6 +12,7 @@ import TripsPage from './pages/TripsPage.jsx'
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<DashboardPage />} />
       <Route path="/t/:slug" element={<LocationPage />} />
       <Route path="/items/new" element={<AddItemPage />} />
       <Route path="/trips" element={<TripsPage />} />

@@ -26,6 +26,9 @@ class LocationSummaryOut(BaseModel):
     id: int
     name: str
     slug: str
+    item_count: int
+    low_count: int
+    out_count: int
 
 
 class ItemCreate(BaseModel):
@@ -89,3 +92,33 @@ class TripSummaryOut(BaseModel):
     trip_date: date
     item_count: int
     total_cents: int
+
+
+class MonthSummaryOut(BaseModel):
+    total_cents: int
+    trip_count: int
+
+
+class DayOut(BaseModel):
+    day: date
+    trip_count: int
+
+
+class WeekSummaryOut(BaseModel):
+    total_cents: int
+    trip_count: int
+    days: list[DayOut]  # always 7, Monday to Sunday
+
+
+class LowItemOut(BaseModel):
+    id: int
+    name: str
+    location: str
+    status: StockStatus
+
+
+class DashboardOut(BaseModel):
+    today: date  # in Melbourne, so the page never has to work it out
+    month: MonthSummaryOut
+    week: WeekSummaryOut
+    low_and_out: list[LowItemOut]
