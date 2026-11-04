@@ -177,7 +177,7 @@ All JSON. All under `/api`. Interactive docs at `http://127.0.0.1:8000/docs` whi
 |---|---|---|
 | `GET /api/health` | `{"status": "ok"}`, no login | done (move to `/api/health` in #8) |
 | `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me` | Single-user login; `me` returns `username` and `display_name`, or 401 | #16 |
-| `GET /api/locations` | The 3 locations (`id`, `name`, `slug`) for the forms, with `low_count` and `out_count` for the dashboard tiles | #10, #14 |
+| `GET /api/locations` | The 3 locations (`id`, `name`, `slug`) for the forms, with `item_count`, `low_count` and `out_count` for the dashboard tiles | #10, #14 |
 | `GET /api/locations/{slug}` | `{"name", "slug", "items": [{"id", "name", "category", "status"}]}`, items sorted by product name; 404 for an unknown slug | #8 |
 | `PATCH /api/inventory/{id}` | Body `{"status": "low"}`; returns the updated item | #9 |
 | `DELETE /api/inventory/{id}` | Stop tracking a product in that location; the product and past trips are kept. Returns 204 with no body | #41 |

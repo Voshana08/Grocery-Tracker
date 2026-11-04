@@ -64,10 +64,11 @@ def remove_item(session: Session, item_id: int) -> bool:
 
 
 def list_locations(session: Session) -> list[LocationSummaryOut]:
-    """Every location with how many of its items are low and out, worked out in one query."""
+    """Every location with its item count and how many are low and out, in one query."""
     rows = session.exec(
         select(
             Location,
+            func.count(InventoryItem.id),
             func.count(InventoryItem.id).filter(InventoryItem.status == StockStatus.low),
             func.count(InventoryItem.id).filter(InventoryItem.status == StockStatus.out),
         )
@@ -80,10 +81,11 @@ def list_locations(session: Session) -> list[LocationSummaryOut]:
             id=location.id,
             name=location.name,
             slug=location.slug,
+            item_count=items,
             low_count=low,
             out_count=out,
         )
-        for location, low, out in rows
+        for location, items, low, out in rows
     ]
 
 

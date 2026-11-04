@@ -835,6 +835,7 @@ a.list-row:hover {
 
 .week-circle[data-state='past'] {
   background: var(--color-low-bg);
+  border: 1.5px solid var(--color-low-border);
 }
 
 .week-circle[data-state='future'] {
@@ -862,6 +863,7 @@ a.list-row:hover {
 }
 
 .dashboard-section {
+  margin-top: 8px; /* with the page's 16px gap, 24px between sections */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -904,6 +906,11 @@ a.list-row:hover {
 .location-tile-status.stocked {
   font-weight: 400;
   color: var(--color-stocked-text);
+}
+
+.location-tile-status.empty {
+  font-weight: 400;
+  color: var(--color-muted);
 }
 
 .status-badge {

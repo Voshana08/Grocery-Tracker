@@ -75,11 +75,11 @@ Every money amount uses `font-variant-numeric: tabular-nums`.
 
 ### Spacing, shape, size
 
-- 4px base unit. Page padding 20px left/right, 20–28px top. Gaps: 8, 10, 12, 16, 20px.
+- 4px base unit. Page padding 20px left/right, 20–28px top. Gaps: 8, 10, 12, 16, 20px; 24px between sections on the dashboard.
 - Corner radius: cards 16px (summary cards 20px); primary buttons 14px; inputs and segment buttons 10–12px; badges and chips 999px.
 - Card: white, 1px `--color-border`, no shadow.
 - **Touch targets at least 44 × 44px.** Primary buttons 52px tall; inputs 44–48px.
-- No shadows, gradients, emoji or blue anywhere.
+- No shadows, gradients or emoji.
 
 ### Icons
 
@@ -103,8 +103,8 @@ Inline SVG, 24px viewBox, stroke 1.75–2px, round caps and joins, colour from `
 | **Tag chip** | "Opened from tag" with NFC waves icon; stocked-tint bg, stocked-tint-text, 13px, pill. Shown on location pages. |
 | **Header** | Back link left (chevron + "Home", 44px tall) or "Cancel"; optional centred title; optional chip right. |
 | **Bottom nav** | 72px, white, top border; 3 equal tabs: Home, Trips, Spending; icon 22px over 12px label; active tab primary colour and `aria-current="page"`; inactive muted. Shown on Dashboard, Trips and Spending; hidden on forms and tag pages. |
-| **Week row** | 7 circles (32px) Mon–Sun with weekday letter below (12px). Trip day: trip-day fill with a white check icon inside, so the meaning never rests on colour alone. Past day without trip: low-bg fill. Future day: 1.5px dashed day-future outline. Today's letter is ink and 600. Each day has an `aria-label` ("Monday, 1 trip", "Tuesday, no trip"). Caption: "Days with a shopping trip are ticked". |
-| **Location tile** | Card link, 3 across; icon, name (15px/600), status line (13px): "2 low" in low-text, "1 out" in ink 600, "All stocked" in stocked-text. Out wins over low when both exist ("1 out · 2 low"). |
+| **Week row** | 7 circles (32px) Mon–Sun with weekday letter below (12px). Trip day: trip-day fill with a white check icon inside, so the meaning never rests on colour alone. Past day without trip: low-bg fill with a 1.5px low-border edge. Future day: 1.5px dashed day-future outline. Today's letter is ink and 600. Each day has an `aria-label` ("Monday, 1 trip", "Tuesday, no trip"). Caption: "Days with a shopping trip are ticked". |
+| **Location tile** | Card link, 3 across; icon, name (15px/600), status line (13px): "2 low" in low-text, "1 out" in ink 600, "All stocked" in stocked-text; "No items yet" in muted when the location is empty. Out wins over low when both exist ("1 out · 2 low"). |
 | **Empty state** | Centred in a card: short heading, one line of muted text, optional primary action. |
 
 ## 4. Screens

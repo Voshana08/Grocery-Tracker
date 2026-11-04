@@ -26,6 +26,7 @@ class LocationSummaryOut(BaseModel):
     id: int
     name: str
     slug: str
+    item_count: int
     low_count: int
     out_count: int
 

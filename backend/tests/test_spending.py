@@ -122,8 +122,8 @@ def test_locations_count_their_low_and_out_items(client, add_item):
     add_item("Milk", "Dairy & eggs", "fridge", StockStatus.plenty)
 
     counts = {
-        loc["slug"]: (loc["low_count"], loc["out_count"])
+        loc["slug"]: (loc["item_count"], loc["low_count"], loc["out_count"])
         for loc in client.get("/api/locations").json()
     }
 
-    assert counts == {"fridge": (0, 0), "pantry": (2, 1), "cleaning": (0, 0)}
+    assert counts == {"fridge": (1, 0, 0), "pantry": (3, 2, 1), "cleaning": (0, 0, 0)}
